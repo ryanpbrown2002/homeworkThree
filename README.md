@@ -16,7 +16,7 @@ A web application with PDF document management capabilities.
 
 
 # Project Structure
-
+'''
 hw3/
 ├── server.js
 ├── pdfs/                    # Folder for your PDF files
@@ -29,3 +29,4 @@ hw3/
 │   └── database.js         # Database operations
 ├── package.json
 └── README.md
+'''
