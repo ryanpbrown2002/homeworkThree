@@ -1,0 +1,31 @@
+# Secure PDF Server
+
+A web application with PDF document management capabilities. 
+# Features
+
+-
+-
+
+
+## Architecture
+
+- nginx: Serves static files and acts as reverse proxy
+- Node.js/Express: Handles API endpoints and  authentication
+- sqlite3: Database to store relevant pdf metadata and file path
+
+
+
+# Project Structure
+
+hw3/
+├── server.js
+├── pdfs/                    # Folder for your PDF files
+├── public/                  # Static files (CSS, JS, images)
+├── views/                   # HTML files or templates
+├── modules/
+│   ├── router.js           # Custom routing module
+│   ├── pdfDiscovery.js     # PDF discovery module
+│   ├── pdfValidation.js    # PDF validation module
+│   └── database.js         # Database operations
+├── package.json
+└── README.md
