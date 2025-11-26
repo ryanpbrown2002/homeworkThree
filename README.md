@@ -1,22 +1,22 @@
-# Secure PDF Server
+# Classic Novels Library
 
-A web application with PDF document management capabilities built with Express, Nginx, and SQLite3.
+A web application for managing and accessing a digital collection of classic novels and literary works, built with Express, Nginx, and SQLite3.
 
 You can access the webpage at **https://allmydocs.now**
 
 ## Features
 
-- **Professional Homepage**: Homepage with information about the PDF collection
-- **PDF Library Page**: Page displaying a list of all available PDF documents with metadata
-- **PDF Viewing**: Ability to view and download individual PDF documents
-- **Secure Access**: HTTPS support with SSL/TLS certificates
-- **Metadata Management**: Store and display metadata for each PDF (title, description, file size, date added)
+- **Professional Homepage**: Elegant homepage showcasing the classic novels collection with information about the literary works
+- **Novel Collection Page**: Curated page displaying all available novels with detailed metadata including author information and descriptions
+- **Novel Reading**: Ability to read and download individual novels in PDF format
+- **Secure Access**: HTTPS support with SSL/TLS certificates for secure access to the literary collection
+- **Rich Metadata**: Store and display comprehensive information for each novel including title, author, description, file size, and date added
 
 ## Architecture
 
 - **Nginx**: Serves static files (HTML, CSS) and acts as reverse proxy for API requests
-- **Node.js/Express**: Handles API endpoints and PDF file serving
-- **SQLite3**: Database to store PDF metadata (filename, title, description, file size, dates)
+- **Node.js/Express**: Handles API endpoints and novel PDF file serving
+- **SQLite3**: Database to store novel metadata (filename, title, description, author info, file size, dates)
 - **Docker**: Containerized application with separate services for nginx and backend
 
 ## Project Structure
@@ -27,7 +27,7 @@ hw3/
 │   ├── Dockerfile
 │   ├── server.js              # Main Express server
 │   ├── package.json
-│   ├── pdfs/                  # Folder for PDF files
+│   ├── pdfs/                  # Folder for novel PDF files
 │   └── modules/               # Custom modules
 │       ├── router.js          # Custom routing module
 │       ├── pdfDiscovery.js    # PDF discovery module
@@ -39,7 +39,8 @@ hw3/
 │   ├── default.conf          # Nginx configuration
 │   └── public/                # Static files served by nginx
 │       ├── index.html         # Homepage
-│       ├── pdfs.html          # PDF library page
+│       ├── pdfs.html          # Novel collection page
+│       └── style.css          # Professional stylesheet with literary theme
 │       └── style.css          # Stylesheet
 ├── docker-compose.yml         # Docker Compose configuration
 ├── docker-compose.dev.yml     # Docker dev configuration
@@ -89,26 +90,26 @@ CREATE TABLE pdfs (
 ```
 
 **Fields:**
-- `id`: Unique identifier for each PDF
-- `filename`: The PDF filename (e.g., "document.pdf")
-- `filepath`: Full path to the PDF file
-- `title`: Display title for the PDF
-- `description`: Optional description of the PDF content
-- `file_size`: Size of the file in bytes
-- `date_added`: Timestamp when the PDF was added
-- `last_modified`: Timestamp when the PDF metadata was last updated
+- `id`: Unique identifier for each novel
+- `filename`: The PDF filename (e.g., "Moby_Dick.pdf")
+- `filepath`: Full path to the novel PDF file
+- `title`: Display title for the novel (e.g., "Moby Dick")
+- `description`: Optional description of the novel, including author, themes, and literary significance
+- `file_size`: Size of the PDF file in bytes
+- `date_added`: Timestamp when the novel was added to the collection
+- `last_modified`: Timestamp when the novel metadata was last updated
 
 ## Routing Structure
 
 ### Static Routes (Served by Nginx)
-- `/` - Homepage (`index.html`)
-- `/pdfs` - PDF Library page (`pdfs.html`)
-- `/style.css` - Stylesheet
+- `/` - Homepage showcasing the classic novels collection (`index.html`)
+- `/pdfs` - Novel Collection page displaying all available novels (`pdfs.html`)
+- `/style.css` - Professional stylesheet with literary-themed design
 
 ### API Routes (Proxied to Backend)
-- `GET /api/pdfs` - Returns JSON array of all PDFs with metadata
+- `GET /api/pdfs` - Returns JSON array of all novels with metadata (title, description, author info, etc.)
 - `GET /health` - Health check endpoint
-- `GET /pdf/:filename` - Serves individual PDF files
+- `GET /pdf/:filename` - Serves individual novel PDF files
 
 ### How Routing Works
 1. Nginx serves static files directly from `/usr/share/nginx/html/`
@@ -135,15 +136,17 @@ git clone <repository-url>
 cd hw3
 ```
 
-### Step 2: Set Up PDFs Folder
+### Step 2: Set Up Novels Folder
 
-Create the PDFs directory and add your PDF files:
+Create the PDFs directory and add your novel PDF files:
 
 ```bash
 mkdir -p backend/pdfs
-# Copy your PDF files into backend/pdfs/
-# Example: cp ~/documents/*.pdf backend/pdfs/
+# Copy your novel PDF files into backend/pdfs/
+# Example: cp ~/novels/*.pdf backend/pdfs/
 ```
+
+**Note**: The application is designed for classic novels and literary works. PDFs are automatically discovered and added to the database on server startup.
 
 ### Step 3: SSL Certificates (For HTTPS)
 
@@ -175,31 +178,31 @@ docker compose logs -f
    ```
    You should see both `nginx` and `backend-nodejs` containers running.
 
-2. **Check backend logs for PDF sync:**
+2. **Check backend logs for novel sync:**
    ```bash
    docker logs backend-nodejs
    ```
-   You should see messages about PDFs being discovered and added to the database.
+   You should see messages about novels being discovered and added to the database.
 
 3. **Access the application:**
    - **Homepage**: `https://localhost` or `https://allmydocs.now`
-   - **PDF Library**: `https://localhost/pdfs` or `https://allmydocs.now/pdfs`
+   - **Novel Collection**: `https://localhost/pdfs` or `https://allmydocs.now/pdfs`
    - **API Endpoint**: `https://localhost/api/pdfs` or `https://allmydocs.now/api/pdfs`
 
-### Step 6: Add PDFs to the Database
+### Step 6: Add Novels to the Database
 
-PDFs are automatically synced when the server starts. If you add new PDFs:
+Novels are automatically synced when the server starts. If you add new novel PDFs:
 
-1. Place PDF files in `backend/pdfs/` directory
+1. Place novel PDF files in `backend/pdfs/` directory
 2. Restart the backend container:
    ```bash
    docker compose restart backend-nodejs
    ```
-3. The server will automatically discover and add new PDFs to the database
+3. The server will automatically discover and add new novels to the database
 
-### Step 7: Update PDF Descriptions (Optional)
+### Step 7: Update Novel Descriptions (Optional)
 
-To update PDF descriptions, use the provided script:
+To update novel descriptions and metadata, use the provided script:
 
 ```bash
 node update-description.js "filename.pdf" "Your description here"
@@ -207,8 +210,10 @@ node update-description.js "filename.pdf" "Your description here"
 
 **Example:**
 ```bash
-node update-description.js "Moby_Dick.pdf" "A classic American novel by Herman Melville about Captain Ahab's obsessive quest for revenge against the white whale Moby Dick"
+node update-description.js "Moby_Dick.pdf" "A classic American novel by Herman Melville about Captain Ahab's obsessive quest for revenge against the white whale Moby Dick. Published in 1851, this epic tale explores themes of obsession, revenge, and man's struggle against nature."
 ```
+
+**Note**: You can update descriptions for any novel in the collection to provide more detailed information about the literary work, author, themes, and historical significance.
 
 ## Common Commands
 
