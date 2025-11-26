@@ -50,6 +50,8 @@ router.get('/api/pdfs', (req, res) => {
 /**
  * Syncs PDFs from filesystem to database
  * This function runs automatically on server startup
+ * - Adds new PDFs found in filesystem
+ * - Removes database entries for PDFs that no longer exist
  */
 function syncPDFsToDatabase() {
     const pdfsFolder = path.join(__dirname, 'pdfs');
@@ -57,18 +59,23 @@ function syncPDFsToDatabase() {
     // Check if pdfs folder exists
     if (!fs.existsSync(pdfsFolder)) {
         console.warn(`PDFs folder not found at: ${pdfsFolder}`);
+        // Still clean up orphaned database entries
+        cleanupOrphanedPDFs([]);
         return;
     }
     
     // Discover PDFs from filesystem
     const discoveredPDFs = pdfDiscovery.discoverPDFs(false); // Don't use cache
     
+    console.log(`Syncing PDFs to database...`);
     if (discoveredPDFs.length === 0) {
         console.log('No PDFs found in the pdfs folder');
+        // Still clean up orphaned database entries
+        cleanupOrphanedPDFs([]);
         return;
     }
     
-    console.log(`Syncing ${discoveredPDFs.length} PDF(s) to database...`);
+    console.log(`Found ${discoveredPDFs.length} PDF(s) in filesystem`);
     
     let processed = 0;
     let synced = 0;
@@ -116,8 +123,27 @@ function syncPDFsToDatabase() {
                             console.log(`✓ Added PDF to database: ${filename}`);
                         }
                         
-                        // When all PDFs are processed, log summary
+                        // When all PDFs are processed, clean up orphaned entries and log summary
                         if (processed === total) {
+                            cleanupOrphanedPDFs(discoveredPDFs, () => {
+                                console.log(`\n--- PDF Sync Summary ---`);
+                                console.log(`Total PDFs found: ${total}`);
+                                console.log(`New PDFs added: ${synced}`);
+                                console.log(`Already in database: ${alreadyExists}`);
+                                if (errors.length > 0) {
+                                    console.log(`Errors: ${errors.length}`);
+                                    errors.forEach(err => console.log(`  - ${err}`));
+                                }
+                            });
+                        }
+                    });
+                } catch (err) {
+                    console.error(`Error processing ${filename}:`, err.message);
+                    errors.push(`Error processing ${filename}: ${err.message}`);
+                    
+                    // When all PDFs are processed, clean up orphaned entries and log summary
+                    if (processed === total) {
+                        cleanupOrphanedPDFs(discoveredPDFs, () => {
                             console.log(`\n--- PDF Sync Summary ---`);
                             console.log(`Total PDFs found: ${total}`);
                             console.log(`New PDFs added: ${synced}`);
@@ -126,14 +152,17 @@ function syncPDFsToDatabase() {
                                 console.log(`Errors: ${errors.length}`);
                                 errors.forEach(err => console.log(`  - ${err}`));
                             }
-                        }
-                    });
-                } catch (err) {
-                    console.error(`Error processing ${filename}:`, err.message);
-                    errors.push(`Error processing ${filename}: ${err.message}`);
-                    
-                    // When all PDFs are processed, log summary
-                    if (processed === total) {
+                        });
+                    }
+                }
+            } else {
+                // PDF already exists
+                alreadyExists++;
+                console.log(`- PDF already in database: ${filename}`);
+                
+                // When all PDFs are processed, clean up orphaned entries and log summary
+                if (processed === total) {
+                    cleanupOrphanedPDFs(discoveredPDFs, () => {
                         console.log(`\n--- PDF Sync Summary ---`);
                         console.log(`Total PDFs found: ${total}`);
                         console.log(`New PDFs added: ${synced}`);
@@ -142,23 +171,72 @@ function syncPDFsToDatabase() {
                             console.log(`Errors: ${errors.length}`);
                             errors.forEach(err => console.log(`  - ${err}`));
                         }
-                    }
+                    });
                 }
-            } else {
-                // PDF already exists
-                alreadyExists++;
-                console.log(`- PDF already in database: ${filename}`);
-                
-                // When all PDFs are processed, log summary
-                if (processed === total) {
-                    console.log(`\n--- PDF Sync Summary ---`);
-                    console.log(`Total PDFs found: ${total}`);
-                    console.log(`New PDFs added: ${synced}`);
-                    console.log(`Already in database: ${alreadyExists}`);
-                    if (errors.length > 0) {
-                        console.log(`Errors: ${errors.length}`);
-                        errors.forEach(err => console.log(`  - ${err}`));
+            }
+        });
+    });
+}
+
+/**
+ * Removes database entries for PDFs that no longer exist in the filesystem
+ * @param {Array} discoveredPDFs - Array of PDF filenames that exist in filesystem
+ * @param {function} callback - Optional callback when cleanup is complete
+ */
+function cleanupOrphanedPDFs(discoveredPDFs, callback) {
+    console.log('Checking for orphaned database entries...');
+    
+    // Get all PDFs from database
+    db.getAllPDFs((err, dbPDFs) => {
+        if (err) {
+            console.error('Error getting PDFs from database:', err);
+            if (callback) callback();
+            return;
+        }
+        
+        if (!dbPDFs || dbPDFs.length === 0) {
+            console.log('No PDFs in database to check');
+            if (callback) callback();
+            return;
+        }
+        
+        const discoveredSet = new Set(discoveredPDFs);
+        let removed = 0;
+        let checked = 0;
+        
+        // Check each database entry
+        dbPDFs.forEach(dbPDF => {
+            checked++;
+            
+            // If PDF in database doesn't exist in filesystem, remove it
+            if (!discoveredSet.has(dbPDF.filename)) {
+                db.deletePDF(dbPDF.filename, (err) => {
+                    if (err) {
+                        console.error(`Error removing orphaned PDF ${dbPDF.filename}:`, err);
+                    } else {
+                        removed++;
+                        console.log(`✗ Removed orphaned database entry: ${dbPDF.filename}`);
                     }
+                    
+                    // When all entries are checked, log summary
+                    if (checked === dbPDFs.length) {
+                        if (removed > 0) {
+                            console.log(`Removed ${removed} orphaned database entry/entries`);
+                        } else {
+                            console.log('No orphaned entries found');
+                        }
+                        if (callback) callback();
+                    }
+                });
+            } else {
+                // When all entries are checked, log summary
+                if (checked === dbPDFs.length) {
+                    if (removed > 0) {
+                        console.log(`Removed ${removed} orphaned database entry/entries`);
+                    } else {
+                        console.log('No orphaned entries found');
+                    }
+                    if (callback) callback();
                 }
             }
         });
