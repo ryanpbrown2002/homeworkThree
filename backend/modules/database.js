@@ -35,14 +35,14 @@ function getAllPDFs(callback) {
 
 /**
  * Adds a new PDF to the database
- * @param {object} pdfData - Object containing filename, filepath, title, description
+ * @param {object} pdfData - Object containing filename, filepath, title, description, file_size
  * @param {function} callback - Callback function (err)
  */
 function addPDF(pdfData, callback) {
     try {
-        const { filename, filepath, title, description } = pdfData;
-        const stmt = db.prepare('INSERT INTO pdfs (filename, filepath, title, description) VALUES (?, ?, ?, ?)');
-        stmt.run(filename, filepath, title, description);
+        const { filename, filepath, title, description, file_size } = pdfData;
+        const stmt = db.prepare('INSERT INTO pdfs (filename, filepath, title, description, file_size) VALUES (?, ?, ?, ?, ?)');
+        stmt.run(filename, filepath, title, description || null, file_size || null);
         callback(null);
     } catch (err) {
         callback(err);

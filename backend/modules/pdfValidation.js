@@ -16,20 +16,30 @@ const PDF_FOLDER = path.join(__dirname, '..', 'pdfs');
  */
 function validatePDF(filename) {
     try {
-        // Construct full file path
-        const filepath = path.join(PDF_FOLDER, filename);
-
-        // Check if file exists
-        if (fs.existsSync(filepath)) {
-            return true;
-        }
-
-        // Check if file extension is .pdf
-        if (!filename.endsWith('.pdf')) {
+        // First check if filename ends with .pdf
+        if (!filename.toLowerCase().endsWith('.pdf')) {
             return false;
         }
 
-        return true;
+        // Sanitize the filename to prevent directory traversal
+        const sanitized = sanitizeFilename(filename);
+        
+        // Construct full file path
+        const filepath = path.join(PDF_FOLDER, sanitized);
+
+        // Check if file exists
+        if (fs.existsSync(filepath)) {
+            // Additional security: ensure the resolved path is within PDF_FOLDER
+            const resolvedPath = path.resolve(filepath);
+            const resolvedFolder = path.resolve(PDF_FOLDER);
+            if (!resolvedPath.startsWith(resolvedFolder)) {
+                console.error('Directory traversal attempt detected');
+                return false;
+            }
+            return true;
+        }
+
+        return false;
     } catch (error) {
         console.error('Error validating PDF:', error);
         return false;

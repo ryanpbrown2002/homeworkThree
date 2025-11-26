@@ -7,6 +7,9 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+    volumes:
+      - ./backend/pdfs:/app/pdfs:ro  # Mount PDFs folder as read-only
+      - ./backend/modules/hw3.db:/app/modules/hw3.db  # Mount database file
     networks:
       - app-network
 

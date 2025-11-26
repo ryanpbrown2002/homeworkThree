@@ -1,5 +1,5 @@
 node_modules/
-pdfs/
+backend/pdfs/
 package-lock.json
 hw3.db
 .env
