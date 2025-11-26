@@ -1,10 +1,13 @@
 # Secure PDF Server
 
 A web application with PDF document management capabilities. 
+
+
 # Features
 
--
--
+- Homepage with relavant information related to the PDFs
+- Page displaying a list of PDFs
+- Ability to read and download each PDF
 
 
 ## Architecture
