@@ -7,7 +7,7 @@ const db = require('./modules/database');
 const Router = require('./modules/router');
 const pdfDiscovery = require('./modules/pdfDiscovery');
 const pdfValidation = require('./modules/pdfValidation');
-const generatePDFListHTML = require('./views/pdfListTemplate');
+const generatePDFListHTML = require('../views/pdfListTemplate');
 
 // Initialize express app
 const app = express();
@@ -16,19 +16,18 @@ const PORT = process.env.PORT || 3000;
 // Initialize router
 const router = new Router();
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Homepage route
 router.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+    res.json({ 
+        message: 'Hello from the API!',
+        timestamp: new Date().toISOString()
+    });
 });
 
-// API route
-router.get('/api', (req, res) => {
-    res.json({
-      message: 'Welcome to my Node.js Express app!',
-      timestamp: new Date().toISOString(),
+router.get('/health', (req, res) => {
+    res.json({ 
+        status: 'healthy',
+        service: 'nodejs-backend'
     });
 });
 
