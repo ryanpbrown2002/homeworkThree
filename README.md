@@ -73,7 +73,7 @@ hw3/
 
 ## Database Schema
 
-The application uses SQLite3 with the following schema:
+The application uses better-sqlite3 with the following schema:
 
 ```sql
 CREATE TABLE pdfs (
