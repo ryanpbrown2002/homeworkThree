@@ -4,7 +4,7 @@ const path = require('path');
 
 // Import modules
 const db = require('./modules/database');
-const router = require('./modules/router');
+const Router = require('./modules/router');
 const pdfDiscovery = require('./modules/pdfDiscovery');
 const pdfValidation = require('./modules/pdfValidation');
 const generatePDFListHTML = require('./views/pdfListTemplate');
@@ -22,6 +22,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Homepage route
 router.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
+
+// API route
+router.get('/api', (req, res) => {
+    res.json({
+      message: 'Welcome to my Node.js Express app!',
+      timestamp: new Date().toISOString(),
+    });
 });
 
 // List PDFs route
@@ -58,6 +66,6 @@ app.use((req, res) => {
     router.handle404(req, res);
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });

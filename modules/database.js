@@ -6,7 +6,7 @@ const dbPath = path.join(__dirname, 'hw3.db');
 const db = new Database(dbPath);
 
 // Create table if it doesn't exist
-db.run(`
+db.exec(`
     CREATE TABLE IF NOT EXISTS pdfs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         filename TEXT NOT NULL UNIQUE,
@@ -21,10 +21,16 @@ db.run(`
 
 /**
  * Gets all PDFs from the database
- * @returns {Array} - Array of PDF objects
+ * @param {function} callback - Callback function (err, pdfs)
  */
-function getAllPDFs() {
-    return db.all('SELECT * FROM pdfs ORDER BY date_added DESC');
+function getAllPDFs(callback) {
+    try {
+        const stmt = db.prepare('SELECT * FROM pdfs ORDER BY date_added DESC');
+        const pdfs = stmt.all();
+        callback(null, pdfs);
+    } catch (err) {
+        callback(err, null);
+    }
 }
 
 /**
@@ -33,12 +39,14 @@ function getAllPDFs() {
  * @param {function} callback - Callback function (err)
  */
 function addPDF(pdfData, callback) {
-    const { filename, filepath, title, description } = pdfData;
-    db.run(
-        'INSERT INTO pdfs (filename, filepath, title, description) VALUES (?, ?, ?, ?)',
-        [filename, filepath, title, description],
-        callback
-    );
+    try {
+        const { filename, filepath, title, description } = pdfData;
+        const stmt = db.prepare('INSERT INTO pdfs (filename, filepath, title, description) VALUES (?, ?, ?, ?)');
+        stmt.run(filename, filepath, title, description);
+        callback(null);
+    } catch (err) {
+        callback(err);
+    }
 }
 
 /**
@@ -47,7 +55,13 @@ function addPDF(pdfData, callback) {
  * @param {function} callback - Callback function (err, row)
  */
 function getPDFByFilename(filename, callback) {
-    db.get('SELECT * FROM pdfs WHERE filename = ?', [filename], callback);
+    try {
+        const stmt = db.prepare('SELECT * FROM pdfs WHERE filename = ?');
+        const row = stmt.get(filename);
+        callback(null, row);
+    } catch (err) {
+        callback(err, null);
+    }
 }
 
 /**
@@ -56,7 +70,13 @@ function getPDFByFilename(filename, callback) {
  * @param {function} callback - Callback function (err)
  */
 function deletePDF(filename, callback) {
-    db.run('DELETE FROM pdfs WHERE filename = ?', [filename], callback);
+    try {
+        const stmt = db.prepare('DELETE FROM pdfs WHERE filename = ?');
+        stmt.run(filename);
+        callback(null);
+    } catch (err) {
+        callback(err);
+    }
 }
 
 /**
@@ -66,25 +86,26 @@ function deletePDF(filename, callback) {
  * @param {function} callback - Callback function (err)
  */
 function updatePDF(filename, updates, callback) {
-    const { title, description } = updates;
-    db.run(
-        'UPDATE pdfs SET title = ?, description = ? WHERE filename = ?',
-        [title, description, filename],
-        callback
-    );
+    try {
+        const { title, description } = updates;
+        const stmt = db.prepare('UPDATE pdfs SET title = ?, description = ? WHERE filename = ?');
+        stmt.run(title, description, filename);
+        callback(null);
+    } catch (err) {
+        callback(err);
+    }
 }
 
 /**
  * Closes the database connection
  */
 function closeDatabase() {
-    db.close((err) => {
-        if (err) {
-            console.error('Error closing database:', err);
-        } else {
-            console.log('Database connection closed');
-        }
-    });
+    try {
+        db.close();
+        console.log('Database connection closed');
+    } catch (err) {
+        console.error('Error closing database:', err);
+    }
 }
 
 module.exports = {
