@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Library - All My Docs</title>
+    <title>Novel Collection - Classic Novels Library</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="nav-container">
-                <h1 class="logo">📚 All My Docs</h1>
+                <h1 class="logo">📚 Classic Novels Library</h1>
                 <ul class="nav-menu">
                     <li><a href="/" class="nav-link">Home</a></li>
-                    <li><a href="/pdfs" class="nav-link active">PDF Library</a></li>
+                    <li><a href="/pdfs" class="nav-link active">Novel Collection</a></li>
                 </ul>
             </div>
         </nav>
@@ -22,9 +22,9 @@
     <main>
         <section class="features">
             <div class="container">
-                <h2 class="section-title">PDF Document Library</h2>
+                <h2 class="section-title">Classic Novels Collection</h2>
                 <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.125rem;">
-                    Browse and access all available PDF documents in the collection
+                    Browse our curated collection of timeless literary works and classic novels
                 </p>
                 <div id="loading" style="text-align: center; padding: 2rem;">
                     <p>Loading PDFs...</p>
@@ -41,7 +41,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 All My Docs. Secure PDF Document Management System.</p>
+            <p>&copy; 2025 Classic Novels Library. A Digital Collection of Literary Masterpieces.</p>
         </div>
     </footer>
 
@@ -87,7 +87,7 @@
 
             if (pdfs.length === 0) {
                 loading.style.display = 'none';
-                pdfListContainer.innerHTML = '<div class="empty-state"><p>No PDFs available yet. Check back soon!</p></div>';
+                pdfListContainer.innerHTML = '<div class="empty-state"><p>No novels available yet. The collection is being curated. Check back soon!</p></div>';
                 pdfListContainer.style.display = 'block';
                 return;
             }
@@ -115,7 +115,7 @@
                         <div class="pdf-meta">
                             ${metaItems}
                         </div>
-                        <a href="/pdf/${encodedFilename}" class="btn btn-primary" target="_blank">View PDF</a>
+                        <a href="/pdf/${encodedFilename}" class="btn btn-primary" target="_blank">Read Novel</a>
                     </div>
                 `;
             }).join('');
