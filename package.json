@@ -2,5 +2,23 @@
   "dependencies": {
     "better-sqlite3": "^12.4.6",
     "express": "^5.1.0"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "hw3",
+  "description": "A web application with PDF document management capabilities.",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanpbrown2002/homeworkThree.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryanpbrown2002/homeworkThree/issues"
+  },
+  "homepage": "https://github.com/ryanpbrown2002/homeworkThree#readme"
 }

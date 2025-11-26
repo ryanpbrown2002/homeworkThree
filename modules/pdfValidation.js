@@ -36,4 +36,14 @@ function validatePDF(filename) {
     }
 }
 
-module.exports = { validatePDF };
+/**
+ * Sanitizes a filename to prevent directory traversal
+ * @param {string} filename - The filename to sanitize
+ * @returns {string} - The sanitized filename
+ */
+function sanitizeFilename(filename) {
+    // Remove any path separators and parent directory references
+    return path.basename(filename);
+}
+
+module.exports = { validatePDF, sanitizeFilename };

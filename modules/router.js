@@ -32,6 +32,16 @@ class Router {
             res.end('Not Found');
         }
     }
+
+    middleware() {
+        return (req, res) => {
+            this.handle(req, res);
+        }
+    }
+
+    handle404(req, res) {
+        res.status(404).send('Not Found');
+    }
 }
 
 module.exports = Router;
