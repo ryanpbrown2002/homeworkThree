@@ -3,3 +3,5 @@ pdfs/
 package-lock.json
 hw3.db
 .env
+nginx/data/
+nginx/letsencrypt/

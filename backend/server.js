@@ -16,6 +16,9 @@ const PORT = process.env.PORT || 3000;
 // Initialize router
 const router = new Router();
 
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Homepage route
 router.get('/', (req, res) => {
     res.json({ 

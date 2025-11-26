@@ -10,18 +10,18 @@ services:
     networks:
       - app-network
 
-  # Nginx Proxy Manager
-  nginx-proxy-manager:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-proxy-manager
+  # Nginx reverse proxy and static file server with HTTPS
+  nginx:
+    build: ./nginx
+    container_name: nginx
     restart: unless-stopped
     ports:
-      - '80:80'      # HTTP traffic
+      - '80:80'      # HTTP traffic (redirects to HTTPS)
       - '443:443'    # HTTPS traffic
-      - '5001:81'    # Admin web interface, pick an unusual port for security
-    volumes: # place to store all the data that we need persistant and external
-      - ./nginx/data:/data
-      - ./nginx/letsencrypt:/etc/letsencrypt
+    volumes:
+      - ./nginx/letsencrypt:/etc/letsencrypt:ro  # Mount SSL certificates as read-only
+    depends_on:
+      - backend-nodejs
     networks:
       - app-network
 
