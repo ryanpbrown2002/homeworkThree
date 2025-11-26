@@ -7,7 +7,6 @@ const db = require('./modules/database');
 const Router = require('./modules/router');
 const pdfDiscovery = require('./modules/pdfDiscovery');
 const pdfValidation = require('./modules/pdfValidation');
-const { generatePDFListHTML } = require('./modules/pdfListTemplate');
 
 // Initialize express app
 const app = express();
@@ -19,10 +18,11 @@ const router = new Router();
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Homepage route
+// Homepage route - Note: nginx serves static index.html for root route
+// This route is kept for API access if needed, but won't be hit by normal web traffic
 router.get('/', (req, res) => {
     res.json({ 
-        message: 'Hello from the API!',
+        message: 'API endpoint - homepage is served by nginx',
         timestamp: new Date().toISOString()
     });
 });
@@ -34,15 +34,15 @@ router.get('/health', (req, res) => {
     });
 });
 
-// List PDFs route
-router.get('/pdfs', (req, res) => {
+// API endpoint to get all PDFs as JSON
+router.get('/api/pdfs', (req, res) => {
     // Get all PDFs from the database
     db.getAllPDFs((err, pdfs) => {
         if (err) {
             res.status(500).json({ error: 'Failed to fetch PDFs' });
-        } 
-        const html = generatePDFListHTML(pdfs);
-        res.send(html);
+            return;
+        }
+        res.json(pdfs);
     });
 });
 

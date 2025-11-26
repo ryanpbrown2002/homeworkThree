@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Library - All My Docs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <h1 class="logo">📚 All My Docs</h1>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li><a href="/pdfs" class="nav-link active">PDF Library</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">PDF Document Library</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.125rem;">
+                    Browse and access all available PDF documents in the collection
+                </p>
+                <div id="loading" style="text-align: center; padding: 2rem;">
+                    <p>Loading PDFs...</p>
+                </div>
+                <div id="pdf-list" class="pdf-list" style="display: none;">
+                    <!-- PDFs will be inserted here by JavaScript -->
+                </div>
+                <div id="error" style="display: none; text-align: center; padding: 2rem;">
+                    <p style="color: #dc2626;">Failed to load PDFs. Please try again later.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 All My Docs. Secure PDF Document Management System.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Format file size for display
+        function formatFileSize(bytes) {
+            if (!bytes) return 'Unknown size';
+            const kb = bytes / 1024;
+            const mb = bytes / (1024 * 1024);
+            if (mb >= 1) return `${mb.toFixed(2)} MB`;
+            return `${kb.toFixed(2)} KB`;
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown date';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Render PDF items
+        function renderPDFs(pdfs) {
+            const pdfListContainer = document.getElementById('pdf-list');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+
+            if (pdfs.length === 0) {
+                loading.style.display = 'none';
+                pdfListContainer.innerHTML = '<div class="empty-state"><p>No PDFs available yet. Check back soon!</p></div>';
+                pdfListContainer.style.display = 'block';
+                return;
+            }
+
+            const pdfItems = pdfs.map(pdf => {
+                const title = escapeHtml(pdf.title || pdf.filename);
+                const description = escapeHtml(pdf.description || 'No description available');
+                const filename = escapeHtml(pdf.filename);
+                const fileSize = pdf.file_size ? formatFileSize(pdf.file_size) : '';
+                const dateAdded = pdf.date_added ? formatDate(pdf.date_added) : '';
+                const encodedFilename = encodeURIComponent(pdf.filename);
+
+                let metaItems = `<span class="meta-item">📄 ${filename}</span>`;
+                if (fileSize) {
+                    metaItems += `<span class="meta-item">💾 ${fileSize}</span>`;
+                }
+                if (dateAdded) {
+                    metaItems += `<span class="meta-item">📅 ${dateAdded}</span>`;
+                }
+
+                return `
+                    <div class="pdf-item">
+                        <h3>${title}</h3>
+                        <p class="pdf-description">${description}</p>
+                        <div class="pdf-meta">
+                            ${metaItems}
+                        </div>
+                        <a href="/pdf/${encodedFilename}" class="btn btn-primary" target="_blank">View PDF</a>
+                    </div>
+                `;
+            }).join('');
+
+            loading.style.display = 'none';
+            pdfListContainer.innerHTML = pdfItems;
+            pdfListContainer.style.display = 'block';
+        }
+
+        // Fetch PDFs from API
+        async function loadPDFs() {
+            try {
+                const response = await fetch('/api/pdfs');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch PDFs');
+                }
+                const pdfs = await response.json();
+                renderPDFs(pdfs);
+            } catch (error) {
+                console.error('Error loading PDFs:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Load PDFs when page loads
+        document.addEventListener('DOMContentLoaded', loadPDFs);
+    </script>
+</body>
+</html>
+

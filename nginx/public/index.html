@@ -1,10 +1,84 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>My App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Library - All My Docs</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Wowza</h1>
-    <p>This is a static page.</p>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <h1 class="logo">📚 All My Docs</h1>
+                <ul class="nav-menu">
+                    <li><a href="/" class="nav-link active">Home</a></li>
+                    <li><a href="/pdfs" class="nav-link">PDF Library</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2 class="hero-title">Welcome to Your Document Library</h2>
+                <p class="hero-subtitle">Access, manage, and explore your collection of PDF documents</p>
+                <a href="/pdfs" class="btn btn-primary">Browse Documents</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📄</div>
+                        <h3>Document Management</h3>
+                        <p>Organize and store your PDF documents in one secure location. Each document includes detailed metadata and descriptions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Easy Discovery</h3>
+                        <p>Quickly find and access your documents with our intuitive browsing interface. Search through titles and descriptions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure Access</h3>
+                        <p>Your documents are served over HTTPS with SSL/TLS encryption, ensuring secure access to your files.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Rich Metadata</h3>
+                        <p>Each document includes comprehensive metadata including title, description, file size, and upload date.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about">
+            <div class="container">
+                <h2 class="section-title">About This Library</h2>
+                <div class="about-content">
+                    <p>This document library provides a centralized platform for managing and accessing your PDF document collection. Whether you're storing research papers, reports, guides, or any other PDF documents, this system makes it easy to organize, browse, and retrieve your files.</p>
+                    <p>All documents are stored securely and can be accessed through our user-friendly interface. Each PDF in the library includes detailed information to help you quickly identify and access the documents you need.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2 class="section-title">Ready to Explore?</h2>
+                <p>Browse our collection of PDF documents and find what you're looking for.</p>
+                <a href="/pdfs" class="btn btn-primary btn-large">View All Documents</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 All My Docs. Secure PDF Document Management System.</p>
+        </div>
+    </footer>
 </body>
 </html>
