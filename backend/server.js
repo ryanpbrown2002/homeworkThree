@@ -7,7 +7,7 @@ const db = require('./modules/database');
 const Router = require('./modules/router');
 const pdfDiscovery = require('./modules/pdfDiscovery');
 const pdfValidation = require('./modules/pdfValidation');
-const generatePDFListHTML = require('../views/pdfListTemplate');
+const { generatePDFListHTML } = require('./modules/pdfListTemplate');
 
 // Initialize express app
 const app = express();

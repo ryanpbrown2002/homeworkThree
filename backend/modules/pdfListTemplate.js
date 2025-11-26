@@ -1,4 +1,4 @@
-// views/pdfListTemplate.js
+// modules/pdfListTemplate.js
 
 /**
  * Generates HTML for the PDF list page
