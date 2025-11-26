@@ -19,5 +19,80 @@ db.run(`
     )
 `);
 
+/**
+ * Gets all PDFs from the database
+ * @returns {Array} - Array of PDF objects
+ */
+function getAllPDFs() {
+    return db.all('SELECT * FROM pdfs ORDER BY date_added DESC');
+}
 
-module.exports = db;
+/**
+ * Adds a new PDF to the database
+ * @param {object} pdfData - Object containing filename, filepath, title, description
+ * @param {function} callback - Callback function (err)
+ */
+function addPDF(pdfData, callback) {
+    const { filename, filepath, title, description } = pdfData;
+    db.run(
+        'INSERT INTO pdfs (filename, filepath, title, description) VALUES (?, ?, ?, ?)',
+        [filename, filepath, title, description],
+        callback
+    );
+}
+
+/**
+ * Gets a single PDF by filename
+ * @param {string} filename - The PDF filename
+ * @param {function} callback - Callback function (err, row)
+ */
+function getPDFByFilename(filename, callback) {
+    db.get('SELECT * FROM pdfs WHERE filename = ?', [filename], callback);
+}
+
+/**
+ * Deletes a PDF from the database
+ * @param {string} filename - The PDF filename
+ * @param {function} callback - Callback function (err)
+ */
+function deletePDF(filename, callback) {
+    db.run('DELETE FROM pdfs WHERE filename = ?', [filename], callback);
+}
+
+/**
+ * Updates an existing PDF's metadata
+ * @param {string} filename - The PDF filename
+ * @param {object} updates - Object containing fields to update
+ * @param {function} callback - Callback function (err)
+ */
+function updatePDF(filename, updates, callback) {
+    const { title, description } = updates;
+    db.run(
+        'UPDATE pdfs SET title = ?, description = ? WHERE filename = ?',
+        [title, description, filename],
+        callback
+    );
+}
+
+/**
+ * Closes the database connection
+ */
+function closeDatabase() {
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing database:', err);
+        } else {
+            console.log('Database connection closed');
+        }
+    });
+}
+
+module.exports = {
+    getAllPDFs,
+    getPDFByFilename,
+    deletePDF,
+    updatePDF,
+    closeDatabase,
+    addPDF,
+    db
+};
