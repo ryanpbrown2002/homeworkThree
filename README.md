@@ -1,6 +1,7 @@
 # Secure PDF Server
 
-A web application with PDF document management capabilities. 
+A web application with PDF document management capabilities.
+You can access the webpage at http://allmydocs.now
 
 
 # Features
