@@ -1,3 +1,4 @@
+// modules/database.js
 const Database = require('better-sqlite3');
 const path = require('path');
 
@@ -19,101 +20,33 @@ db.exec(`
     )
 `);
 
-/**
- * Gets all PDFs from the database
- * @param {function} callback - Callback function (err, pdfs)
- */
-function getAllPDFs(callback) {
-    try {
-        const stmt = db.prepare('SELECT * FROM pdfs ORDER BY date_added DESC');
-        const pdfs = stmt.all();
-        callback(null, pdfs);
-    } catch (err) {
-        callback(err, null);
-    }
+// Get all PDFs from database
+function getAllPDFs() {
+    return db.prepare('SELECT * FROM pdfs ORDER BY data_added DESC').all();
 }
 
-/**
- * Adds a new PDF to the database
- * @param {object} pdfData - Object containing filename, filepath, title, description, file_size
- * @param {function} callback - Callback function (err)
- */
-function addPDF(pdfData, callback) {
-    try {
-        const { filename, filepath, title, description, file_size } = pdfData;
-        const stmt = db.prepare('INSERT INTO pdfs (filename, filepath, title, description, file_size) VALUES (?, ?, ?, ?, ?)');
-        stmt.run(filename, filepath, title, description || null, file_size || null);
-        callback(null);
-    } catch (err) {
-        callback(err);
-    }
+// Add a new PDF to database
+function addPDF(pdfData) {
+    const stmt = db.prepare('INSERT INTO pdfs (filename, filepath, title, description, file_size) VALUES (?, ?, ?, ?, ?)');
+    const result = stmt.run(pdfData.filename, pdfData.filepath, pdfData.title, pdfData.description, pdfData.file_size);
+    return { id: result.lastInsertRowid, filename: pdfData.filename, filepath: pdfData.filepath, title: pdfData.title, description: pdfData.description, file_size: pdfData.file_size };
 }
 
-/**
- * Gets a single PDF by filename
- * @param {string} filename - The PDF filename
- * @param {function} callback - Callback function (err, row)
- */
-function getPDFByFilename(filename, callback) {
-    try {
-        const stmt = db.prepare('SELECT * FROM pdfs WHERE filename = ?');
-        const row = stmt.get(filename);
-        callback(null, row);
-    } catch (err) {
-        callback(err, null);
-    }
+
+// Get a pdf by its filename
+function getPDFByFilename(filename) {
+    return db.prepare('SELECT * FROM pdfs WHERE filename = ?').get(filename);
 }
 
-/**
- * Deletes a PDF from the database
- * @param {string} filename - The PDF filename
- * @param {function} callback - Callback function (err)
- */
-function deletePDF(filename, callback) {
-    try {
-        const stmt = db.prepare('DELETE FROM pdfs WHERE filename = ?');
-        stmt.run(filename);
-        callback(null);
-    } catch (err) {
-        callback(err);
-    }
-}
-
-/**
- * Updates an existing PDF's metadata
- * @param {string} filename - The PDF filename
- * @param {object} updates - Object containing fields to update
- * @param {function} callback - Callback function (err)
- */
-function updatePDF(filename, updates, callback) {
-    try {
-        const { title, description } = updates;
-        const stmt = db.prepare('UPDATE pdfs SET title = ?, description = ? WHERE filename = ?');
-        stmt.run(title, description, filename);
-        callback(null);
-    } catch (err) {
-        callback(err);
-    }
-}
-
-/**
- * Closes the database connection
- */
-function closeDatabase() {
-    try {
-        db.close();
-        console.log('Database connection closed');
-    } catch (err) {
-        console.error('Error closing database:', err);
-    }
+// Delete a pdf by its filename
+function deletePDF(filename) {
+    return db.prepare('DELETE FROM pdfs WHERE filename = ?').run(filename);
 }
 
 module.exports = {
-    getAllPDFs,
-    getPDFByFilename,
-    deletePDF,
-    updatePDF,
-    closeDatabase,
-    addPDF,
-    db
+    db: db,
+    getAllPDFs: getAllPDFs,
+    addPDF: addPDF,
+    getPDFByFilename: getPDFByFilename,
+    deletePDF: deletePDF
 };
