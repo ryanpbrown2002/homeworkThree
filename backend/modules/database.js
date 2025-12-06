@@ -22,7 +22,7 @@ db.exec(`
 
 // Get all PDFs from database
 function getAllPDFs() {
-    return db.prepare('SELECT * FROM pdfs ORDER BY data_added DESC').all();
+    return db.prepare('SELECT * FROM pdfs ORDER BY date_added DESC').all();
 }
 
 // Add a new PDF to database
