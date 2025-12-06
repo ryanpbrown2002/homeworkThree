@@ -49,10 +49,6 @@ app.use((req, res) => {
     router.handle404(req, res);
 });
 
-// Sync PDFs to database on startup
-console.log('Starting PDF sync on server startup...');
-syncPDFsToDatabase();
-
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });
