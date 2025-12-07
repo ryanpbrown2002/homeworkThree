@@ -26,7 +26,7 @@ function syncDatabase() {
                 // if not, add it to the database
                 const filepath = path.join(__dirname, 'pdfs', filename);
                 const fileSize = fs.statSync(filepath).size;
-                const title = filename.replace('.pdf', '').replace('-', ' ');
+                const title = filename.replace('.pdf', '').replace('_', ' ');
                 const dateAdded = new Date().toISOString();
                 const lastModified = new Date().toISOString();
                 db.addPDF({
