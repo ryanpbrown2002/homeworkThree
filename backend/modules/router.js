@@ -29,4 +29,10 @@ router.get('/api/pdfs', (req, res) => {
     res.json(pdfs);
 });
 
+// handle 404
+router.use((req, res) => {
+    res.status(404).send('Page not found');
+});
+
+// export router
 module.exports = router;
