@@ -1,6 +1,8 @@
 // modules/database.js
 const Database = require('better-sqlite3');
 const path = require('path');
+const fs = require('fs');
+const pdfDiscovery = require('./pdfDiscovery');
 
 // Connect to database file
 const dbPath = path.join(__dirname, 'hw3.db');
@@ -23,6 +25,11 @@ db.exec(`
 // Get all PDFs from database
 function getAllPDFs() {
     return db.prepare('SELECT * FROM pdfs ORDER BY date_added DESC').all();
+}
+
+// Get a pdf by its filename
+function getPDF(filename) {
+    return db.prepare('SELECT * FROM pdfs WHERE filename = ?').get(filename);
 }
 
 // Add a new PDF to database
@@ -81,8 +88,10 @@ function syncDatabase() {
 module.exports = {
     db: db,
     getAllPDFs: getAllPDFs,
+    getPDF: getPDF,
     addPDF: addPDF,
     getPDFByFilename: getPDFByFilename,
     deletePDF: deletePDF,
-    syncDatabase: syncDatabase
+    syncDatabase: syncDatabase,
+    updatePDF: updatePDF
 };
