@@ -1,8 +1,6 @@
 // modules/database.js
 const Database = require('better-sqlite3');
 const path = require('path');
-const fs = require('fs');
-const pdfDiscovery = require('./pdfDiscovery');
 
 // Connect to database file
 const dbPath = path.join(__dirname, 'hw3.db');
@@ -56,35 +54,6 @@ function deletePDF(filename) {
     return db.prepare('DELETE FROM pdfs WHERE filename = ?').run(filename);
 }
 
-// Sync database with all folders in pdfs directory upon startup
-function syncDatabase() {
-    // Get a list of all pdf filenmaes
-    const pdfs = pdfDiscovery();
-    for (const filename of pdfs) {
-        try {
-            // check if pdf file exist in db already
-            if (!db.getPDFByFilename(filename)) {
-                // if not, add it to the database
-                const filepath = path.join(__dirname, 'pdfs', filename);
-                const fileSize = fs.statSync(filepath).size;
-                const title = filename.replace('.pdf', '').replace(/_/g, ' ');
-                db.addPDF({
-                    filename: filename,
-                    filepath: filepath,
-                    title: title,
-                    description: '',
-                    file_size: fileSize
-                });
-                console.log(`Added ${filename} to database`);
-            } else {
-                console.log(`${filename} already exists in database`);
-            }
-        } catch (error) {
-            console.error(`Error adding ${filename} to database: ${error.message}`);
-        }
-    }
-}
-
 module.exports = {
     db: db,
     getAllPDFs: getAllPDFs,
@@ -92,6 +61,5 @@ module.exports = {
     addPDF: addPDF,
     getPDFByFilename: getPDFByFilename,
     deletePDF: deletePDF,
-    syncDatabase: syncDatabase,
     updatePDF: updatePDF
 };
