@@ -103,7 +103,7 @@ CREATE TABLE pdfs (
 ### Static Routes (Served by Nginx)
 - `/` - Homepage showcasing the classic novels collection (`index.html`)
 - `/pdfs` - Novel Collection page displaying all available novels (`pdfs.html`)
-- `/style.css` - Professional stylesheet with literary-themed design
+- `/style.css` - Stylesheet
 
 ### API Routes (Proxied to Backend)
 - `GET /api/pdfs` - Returns JSON array of all novels with metadata (title, description, author info, etc.)
@@ -111,10 +111,10 @@ CREATE TABLE pdfs (
 - `GET /pdfs/:filename` - Serves individual novel PDF files
 
 ### How Routing Works
-1. Nginx serves static files directly from `/usr/share/nginx/html/`
+1. Nginx serves static files
 2. API routes (`/api/*`, `/pdfs/*`) are proxied to the Node.js backend
-3. The backend uses a custom routing module to handle requests
-4. PDF files are served using Express's `sendFile()` method (not static middleware)
+3. The backend uses the routing module to handle requests
+4. PDF files are served using Express
 5. All HTTP traffic redirects to HTTPS
 
 
