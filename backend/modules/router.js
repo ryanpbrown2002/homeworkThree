@@ -1,6 +1,7 @@
 // modules/router.js
 const express = require('express');
 const path = require('path');
+const pdfDiscovery = require('./pdfDiscovery');
 
 // Initialize router
 const router = express.Router();
@@ -25,7 +26,7 @@ router.get('/pdfs', (req, res) => {
 
 // api endpoint to get a list of all pdfs
 router.get('/api/pdfs', (req, res) => {
-    const pdfs = db.getAllPDFs();
+    const pdfs = pdfDiscovery();
     res.json(pdfs);
 });
 
