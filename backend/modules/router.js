@@ -25,19 +25,20 @@ router.get('/pdfs', (req, res) => {
     res.sendFile(path.join(__dirname, '../nginx/public/pdfs.html'));
 });
 
-// api endpoint to get a list of all pdfs
+// api endpoint with pdf data
+// necessary for pdf.html to populate with info
 router.get('/api/pdfs', (req, res) => {
     const pdfs = db.getAllPDFs();
     res.json(pdfs);
 });
 
 // api endpoint to get a single pdf by filename
-router.get('pdfs/:filename', (req, res) => {
+router.get('/pdfs/:filename', (req, res) => {
     const filename = req.params.filename;
     if (!pdfValidation(filename)) {
         return res.status(404).json({ error: 'PDF not found' });
     } else {
-        const pdfPath = db.getPDFByFilename(filename).filepath;
+        const pdfPath = path.join(__dirname, '../pdfs', filename);
         res.sendFile(pdfPath);
     }
 });
