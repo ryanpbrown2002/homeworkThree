@@ -159,7 +159,7 @@ docker compose ps
 docker compose logs -f
 ```
 
-### Step 5: Verify the Application
+### Step 5: Verify Application is Functioning
 
 1. **Check that containers are running:**
    ```bash

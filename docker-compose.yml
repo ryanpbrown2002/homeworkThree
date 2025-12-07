@@ -9,6 +9,7 @@ services:
       - PORT=3000
     volumes:
       - ./backend/pdfs:/app/pdfs:ro  # Mount PDFs folder as read-only
+      - ./backend/modules:/app/modules  # Mount modules directory (includes database)
     networks:
       - app-network
 
