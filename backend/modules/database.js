@@ -34,9 +34,8 @@ function addPDF(pdfData) {
 
 // Update a PDF in database
 function updatePDF(pdfData) {
-    const stmt = db.prepare('UPDATE pdfs SET title = ?, description = ?, file_size = ? WHERE filename = ?');
-    const result = stmt.run(pdfData.title, pdfData.description, pdfData.file_size, pdfData.filename);
-    return { id: result.lastInsertRowid, filename: pdfData.filename, filepath: pdfData.filepath, title: pdfData.title, description: pdfData.description, file_size: pdfData.file_size };
+    const stmt = db.prepare('UPDATE pdfs SET title = ?, description = ?, file_size = ?, last_modified = CURRENT_TIMESTAMP WHERE filename = ?');
+    stmt.run(pdfData.title, pdfData.description, pdfData.file_size, pdfData.filename );
 }
 
 
@@ -62,16 +61,12 @@ function syncDatabase() {
                 const filepath = path.join(__dirname, 'pdfs', filename);
                 const fileSize = fs.statSync(filepath).size;
                 const title = filename.replace('.pdf', '').replace(/_/g, ' ');
-                const dateAdded = new Date().toISOString();
-                const lastModified = new Date().toISOString();
                 db.addPDF({
                     filename: filename,
                     filepath: filepath,
                     title: title,
                     description: '',
-                    file_size: fileSize,
-                    date_added: dateAdded,
-                    last_modified: lastModified
+                    file_size: fileSize
                 });
                 console.log(`Added ${filename} to database`);
             } else {

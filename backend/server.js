@@ -1,7 +1,5 @@
 // server.js
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
 
 // Import modules
 const db = require('./modules/database');
