@@ -167,13 +167,7 @@ docker compose logs -f
    ```
    You should see both `nginx` and `backend-nodejs` containers running.
 
-2. **Check backend logs for novel sync:**
-   ```bash
-   docker logs backend-nodejs
-   ```
-   You should see messages about novels being discovered and added to the database.
-
-3. **Access the application:**
+2. **Access the application:**
    - **Homepage**: `https://localhost` or `https://allmydocs.now`
    - **Novel Collection**: `https://localhost/pdfs` or `https://allmydocs.now/pdfs`
    - **API Endpoint**: `https://localhost/api/pdfs` or `https://allmydocs.now/api/pdfs`
