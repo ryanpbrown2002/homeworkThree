@@ -32,6 +32,13 @@ function addPDF(pdfData) {
     return { id: result.lastInsertRowid, filename: pdfData.filename, filepath: pdfData.filepath, title: pdfData.title, description: pdfData.description, file_size: pdfData.file_size };
 }
 
+// Update a PDF in database
+function updatePDF(pdfData) {
+    const stmt = db.prepare('UPDATE pdfs SET title = ?, description = ?, file_size = ? WHERE filename = ?');
+    const result = stmt.run(pdfData.title, pdfData.description, pdfData.file_size, pdfData.filename);
+    return { id: result.lastInsertRowid, filename: pdfData.filename, filepath: pdfData.filepath, title: pdfData.title, description: pdfData.description, file_size: pdfData.file_size };
+}
+
 
 // Get a pdf by its filename
 function getPDFByFilename(filename) {

@@ -15,6 +15,16 @@ const PORT = process.env.PORT || 3000;
 
 app.use(router);
 
+function syncDatabase() {
+    const pdfs = pdfDiscovery();
+    for (const pdf of pdfs) [
+        db.addPDF(pdf),
+        console.log(`Added ${pdf.filename} to database`)
+    ]
+    console.log('Database synced');
+}
+syncDatabase();
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
 });
