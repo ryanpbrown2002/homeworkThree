@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const db = require('./database');
+const pdfValidation = require('./pdfValidation');
 
 // Initialize router
 const router = express.Router();
@@ -28,6 +29,17 @@ router.get('/pdfs', (req, res) => {
 router.get('/api/pdfs', (req, res) => {
     const pdfs = db.getAllPDFs();
     res.json(pdfs);
+});
+
+// api endpoint to get a single pdf by filename
+router.get('pdfs/:filename', (req, res) => {
+    const filename = req.params.filename;
+    if (!pdfValidation(filename)) {
+        return res.status(404).json({ error: 'PDF not found' });
+    } else {
+        const pdfPath = db.getPDFByFilename(filename).filepath;
+        res.sendFile(pdfPath);
+    }
 });
 
 // handle 404
