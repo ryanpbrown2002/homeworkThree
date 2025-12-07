@@ -182,11 +182,3 @@ Novels are automatically synced when the server starts. If you add new novel PDF
    docker compose restart backend-nodejs
    ```
 3. The server will automatically discover and add new novels to the database
-
-### Step 7: Update Novel Descriptions (Optional)
-
-To update novel descriptions and metadata, use the provided script:
-
-```bash
-node update-description.js "filename.pdf" "Your description here"
-```
