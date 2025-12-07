@@ -7,7 +7,7 @@ const pdfDiscovery = require('./pdfDiscovery');
 const router = express.Router();
 
 // health endpoint
-router.get('/health', (req, res) => {
+router.get('/api/health', (req, res) => {
     res.json({ 
         status: 'healthy',
         service: 'nodejs-backend'
